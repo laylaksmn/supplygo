@@ -7,26 +7,19 @@ if (isset($_SESSION['user'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $validName = "Admin";
-    $validUser = "admin@gmail.com";
-    $validPass = "12345";
-
     $nama = $_POST['fullname'];
     $email = $_POST['email'];
     $pass  = $_POST['password'];
     $confirmPass = $_POST['confirmPassword'];
 
-    if ($nama === $validName && $email === $validUser && $pass === $validPass && $confirmPass === $validPass) {
+    if ($confirmPass === $pass) {
+        $fileUser = fopen('file.txt', 'a+');
+        fwrite($fileUser, "$nama, $email, $pass\n");
+        fclose($fileUser);
         $_SESSION['user'] = $email;
         header("Location: dashboard.php");
         exit();
-    } if ($email != $validUser) {
-        $error = "Incorret email!";
-    } if ($pass != $validPass) {
-        $error = "Incorret password!";
-    } if ($confirmPass != $pass) {
-        $error = "Passwords didn't match!";
-    }
+    } else $error = "Passwords didn't match!";
 }
 ?>
 
