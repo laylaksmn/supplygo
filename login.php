@@ -1,20 +1,35 @@
 <?php
 session_start();
 
-if (isset($_SESSION['user'])) {
-    header("Location: dashboard.php");
-    exit();
-}
-
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $validUser = "admin@gmail.com";
-    $validPass = "12345";
-
     $email = $_POST['email'];
     $pass  = $_POST['password'];
 
-    if ($email === $validUser && $pass === $validPass) {
-        $_SESSION['user'] = $email;
+    $fileUser = fopen('file.txt', 'r');
+    $users = [];
+
+    while (($line = fgets($fileUser)) !== false) {
+        $data = explode(',', trim($line));
+        if (count($data) === 3) {
+            $users[] = [
+                'nama' => trim($data[0]),
+                'email' => trim($data[1]),
+                'password' => trim($data[2])
+            ];
+        }
+    }
+    fclose($fileUser);
+
+    $login = false;
+    for ($i = 0; $i < count($users); $i++) {
+        if ($users[$i]['email'] === $email && $users[$i]['password'] === $pass) {
+            $login = true;
+            $_SESSION['user'] = $users[$i]['email'];
+            break;
+        }
+    }
+
+    if ($login) {
         header("Location: dashboard.php");
         exit();
     } else {
