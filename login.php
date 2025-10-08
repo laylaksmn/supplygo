@@ -25,6 +25,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if ($users[$i]['email'] === $email && $users[$i]['password'] === $pass) {
             $login = true;
             $_SESSION['user'] = $users[$i]['email'];
+            $_SESSION['nama'] = $users[$i]['nama'];
             break;
         }
     }
