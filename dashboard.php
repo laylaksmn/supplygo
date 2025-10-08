@@ -1,21 +1,6 @@
 <?php
 session_start();
 
-if (isset($_POST['email']) && isset($_POST['password'])) {
-    $validUser = "admin@gmail.com";
-    $validPass = "12345";
-
-    $email = $_POST['email'];
-    $pass  = $_POST['password'];
-
-    if ($email === $validUser && $pass === $validPass) {
-        $_SESSION['user'] = $email;
-    } else {
-        header("Location: login.php?error=1");
-        exit();
-    }
-}
-
 if (isset($_GET['logout'])) {
     session_destroy();
     header("Location: login.php");
@@ -27,7 +12,7 @@ if (!isset($_SESSION['user'])) {
     exit();
 }
 
-$username = $_SESSION['user'];
+$username = $_SESSION['nama'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -46,9 +31,8 @@ $username = $_SESSION['user'];
 
     .sidebar {
       width: 240px;
-      background: linear-gradient(180deg, #000000, #ff6600);
+      background: #000000;
       padding: 25px 18px;
-      color: #fff;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -59,15 +43,12 @@ $username = $_SESSION['user'];
       object-fit: contain;
       margin-bottom: 10px;
       border-radius: 50%;
-      background: rgba(255,255,255,0.08);
       padding: 8px;
     }
     .sidebar h2 {
       margin: 0 0 30px;
       font-size: 22px;
-      background: linear-gradient(90deg, #ff7b00ff, #ffffffff);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #ffffffff;
       font-weight: 900;
       letter-spacing: 1px;
     }
@@ -95,17 +76,11 @@ $username = $_SESSION['user'];
     }
     .header {
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: linear-gradient(90deg, #000000, #ff6600);
-      padding: 20px 25px;
-      border-radius: 12px;
-      color: #fff;
       margin-bottom: 30px;
     }
     .header h1 {
       margin: 0;
-      font-size: 22px;
+      font-size: 30px;
     }
     .header .btn {
       background: linear-gradient(90deg, #ff6600, #cc5200);
