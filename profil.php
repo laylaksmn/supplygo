@@ -1,8 +1,8 @@
 <?php
 include 'auth.php';
 
-if (!isset($_SESSION['fullname'])) {
-  $_SESSION['fullname'] = "Nama";
+if (!isset($_SESSION['nama'])) {
+  $_SESSION['nama'] = isset($_SESSION['name']) ? $_SESSION['name'] : "Nama";
 }
 if (!isset($_SESSION['bio'])) {
   $_SESSION['bio'] = "Tambahkan bio";
@@ -16,35 +16,25 @@ if (!is_dir($uploadDir)) {
   mkdir($uploadDir, 0755, true);
 }
 
-if (!isset($_SESSION['profilepicture']) || empty($_SESSION['profilepicture'])) {
+if (!isset($_SESSION['profilepicture'])) {
   $_SESSION['profilepicture'] = $uploadDir . 'defaultprofile.jpg';
 }
 
 $profilepicture = $_SESSION['profilepicture'];
 
-// kalau file dihapus manual, fallback ke default
-if (!file_exists($profilepicture)) {
-  $profilepicture = $uploadDir . 'defaultprofile.jpg';
-}
-
-// --------------------------
-// LOGIKA FORM POST
-// --------------------------
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-  
-  // kalau tombol delete ditekan
+
   if (isset($_POST['delete_profile'])) {
     if ($_SESSION['profilepicture'] !== $uploadDir . 'defaultprofile.jpg') {
-      @unlink($_SESSION['profilepicture']); // hapus file
+      @unlink($_SESSION['profilepicture']);
     }
     $_SESSION['profilepicture'] = $uploadDir . 'defaultprofile.jpg';
     header("Location: profil.php");
     exit();
   }
 
-  // update nama, bio, alamat
-  if (isset($_POST['fullname'])) {
-      $_SESSION['fullname'] = $_POST['fullname'];
+  if (isset($_POST['nama'])) {
+      $_SESSION['nama'] = $_POST['nama'];
   }
   if (isset($_POST['bio'])) {
       $_SESSION['bio'] = $_POST['bio'];
@@ -53,14 +43,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       $_SESSION['address'] = $_POST['address'];
   }
 
-  // upload foto baru
   if (isset($_FILES['profilepicture']) && $_FILES['profilepicture']['error'] === UPLOAD_ERR_OK) {
       $fileTmpPath = $_FILES['profilepicture']['tmp_name'];
-      $fileName = time() . '_' . $_FILES['profilepicture']['name']; // biar unik
+      $fileName = time() . '_' . $_FILES['profilepicture']['name'];
       $save = $uploadDir . $fileName;
       move_uploaded_file($fileTmpPath, $save);
 
-      // hapus foto lama kalau bukan default
       if ($_SESSION['profilepicture'] !== $uploadDir . 'defaultprofile.jpg') {
         @unlink($_SESSION['profilepicture']);
       }
@@ -72,7 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
   exit();
 }
 
-$fullname = $_SESSION['fullname'];
+$nama = $_SESSION['nama'];
 $bio = $_SESSION['bio'];
 $address = $_SESSION['address'];
 $profilepicture = $_SESSION['profilepicture'];
@@ -86,7 +74,7 @@ $profilepicture = $_SESSION['profilepicture'];
 </head>
 <body>
   <header>
-    <h2>Profile - <?php echo $_SESSION['user']; ?></h2>
+    <h2>Profile - <?php echo $_SESSION['nama']; ?></h2>
     <nav>
       <a href="dashboard.php">Home</a>
       <a href="#">Order</a>
@@ -101,8 +89,8 @@ $profilepicture = $_SESSION['profilepicture'];
   <img src="<?= $profilepicture ?>" id="profilepicturepreview" alt="TAMBAH PROFIL" />
   <input type="file" name="profilepicture" id="profilepicture" style="display:none;" accept="image/*" /><br>
 
-  <label for="fullname">Name</label><br>
-  <input type="text" id="fullname" name="fullname" value="<?= $fullname ?>"><br>
+  <label for="nama">Name</label><br>
+  <input type="text" id="nama" name="nama" value="<?= $nama ?>"><br>
 
   <label for="bio">Bio</label><br>
   <textarea id="bio" name="bio"><?= $bio ?></textarea><br>
@@ -110,12 +98,11 @@ $profilepicture = $_SESSION['profilepicture'];
   <label for="address">Address</label><br>
   <textarea id="address" name="address"><?= $address ?></textarea><br>
 
-  <button type="submit" id="edit">Save Profile</button>
-
   <div class="photo-actions">
-    <button type="submit" name="delete_profile" id="deletephoto" class="delete-btn">Hapus Foto Profil</button>
-    <button type="button" id="addphoto" class="add-btn">Tambah / Ganti Foto Profil</button>
+    <button type="submit" name="delete_profile" id="deletephoto" class="delete-btn">Delete Photo Profile</button>
+    <button type="button" id="addphoto" class="add-btn">Change Photo Profile</button>
   </div>
+  <button type="submit" id="edit">Save Profile</button>
 </form>
 
     </div>
@@ -126,9 +113,9 @@ $profilepicture = $_SESSION['profilepicture'];
     const preview = document.getElementById('profilepicturepreview');
     const addphoto = document.getElementById('addphoto');
 
-    addphoto.addEventListener('click', () => {
-      file.click();
-    });
+    // addphoto.addEventListener('click', () => {
+    //   file.click();
+    // });
 
     file.addEventListener('change', (event) => {
       const file = event.target.files[0];
