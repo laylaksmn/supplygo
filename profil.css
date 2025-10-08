@@ -102,9 +102,9 @@ button:hover {
 }
 .photo-actions {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
   gap: 15px;
-  margin-top: 30px;
+  margin-bottom: 50px;
 }
 
 .photo-actions .add-btn {
@@ -114,7 +114,9 @@ button:hover {
 }
 
 .photo-actions .delete-btn {
-  background-color: #ff6b81;
+  color: black;
+  border: 2px solid #ff6600;
+  background-color: white;
   padding: 10px 25px;
   border-radius: 20px;
 }
