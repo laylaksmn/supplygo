@@ -1,1 +1,3 @@
 Admin, admin@gmail.com, 12345
+Bagas, bagas31@gmail.com, bagas12345
+Budi, budi12@gmail.com, budi12345

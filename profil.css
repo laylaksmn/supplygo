@@ -16,6 +16,16 @@ header {
   justify-content: space-between;
   align-items: center;
 }
+.profile-container img {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  cursor: pointer;
+  margin-bottom: 25px;
+  object-fit: cover;
+  border: 3px solid #ff6600;
+}
+
 header h2 {
   margin: 0;
   color: #ff6600;
@@ -89,4 +99,29 @@ button {
 button:hover {
   background-color: #5f2206;
   transform: scale(0.95);
+}
+.photo-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 15px;
+  margin-bottom: 50px;
+}
+
+.photo-actions .add-btn {
+  background-color: #ff6600;
+  padding: 10px 25px;
+  border-radius: 20px;
+}
+
+.photo-actions .delete-btn {
+  color: black;
+  border: 2px solid #ff6600;
+  background-color: white;
+  padding: 10px 25px;
+  border-radius: 20px;
+}
+
+.photo-actions button:hover {
+  transform: scale(0.95);
+  opacity: 0.9;
 }
