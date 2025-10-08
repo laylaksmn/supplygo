@@ -113,9 +113,9 @@ $profilepicture = $_SESSION['profilepicture'];
     const preview = document.getElementById('profilepicturepreview');
     const addphoto = document.getElementById('addphoto');
 
-    // addphoto.addEventListener('click', () => {
-    //   file.click();
-    // });
+    addphoto.addEventListener('click', () => {
+    file.click();
+    });
 
     file.addEventListener('change', (event) => {
       const file = event.target.files[0];
