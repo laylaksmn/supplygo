@@ -1,4 +1,5 @@
 <?php include 'auth.php'; 
+
   if (!isset($_SESSION['fullname'])) {
     $_SESSION['fullname'] = "Nama";
   }
@@ -35,7 +36,26 @@
   $fullname = $_SESSION['fullname'];
   $bio = $_SESSION['bio'];
   $address = $_SESSION['address'];
-  $profilepicture = isset($_SESSION['profilepicture']) ? $_SESSION['profilepicture'] : 'defaultprofile.jpg';
+ $uploadDir = 'uploadsPP/';
+
+// pastikan folder upload ada
+if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0755, true);
+}
+
+// kalau user belum punya foto, pakai default
+if (!isset($_SESSION['profilepicture']) || empty($_SESSION['profilepicture'])) {
+    $_SESSION['profilepicture'] = $uploadDir . 'defaultprofile.jpg';
+}
+
+$profilepicture = $_SESSION['profilepicture'];
+
+// kalau file dihapus manual dari folder, fallback ke default
+if (!file_exists($profilepicture)) {
+    $profilepicture = $uploadDir . 'defaultprofile.jpg';
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -56,18 +76,22 @@
   </header>
   <main>
     <div class="profile-container" >
-      <form action="profil.php" method="post" enctype="multipart/form-data" >
-        <img src="<?= $profilepicture ?>" id="profilepicturepreview" />
-        <input type="file" name="profilepicture" id="profilepicture" style="display:none;" accept="image/*" /></br>
-        <label for="fullname">Name</label></br>
-        <input type="text" id="fullname" name="fullname" value="<?= $fullname ?>" ></br>
-        <label for="bio">Bio</label></br>
-        <textarea id="bio" name="bio" ><?= $bio ?></textarea></br>
-        <label for="address">Address</label></br>
-        <textarea id="address" name="address" ><?= $address ?></textarea></br>
+      <form action="profil.php" method="post" enctype="multipart/form-data">
+  <img src="<?= $profilepicture ?>" id="profilepicturepreview" alt="TAMBAH PROFIL" />
+  <input type="file" name="profilepicture" id="profilepicture" style="display:none;" accept="image/*" /><br>
 
-        <button type="submit" id="edit" >Save Profile</button>
-      </form>
+  <label for="fullname">Name</label><br>
+  <input type="text" id="fullname" name="fullname" value="<?= $fullname ?>"><br>
+
+  <label for="bio">Bio</label><br>
+  <textarea id="bio" name="bio"><?= $bio ?></textarea><br>
+
+  <label for="address">Address</label><br>
+  <textarea id="address" name="address"><?= $address ?></textarea><br>
+
+  <button type="submit" id="edit">Save Profile</button>
+</form>
+
     </div>
   </main>
 </body>
