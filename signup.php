@@ -17,7 +17,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         fwrite($fileUser, "$nama, $email, $pass\n");
         fclose($fileUser);
         $_SESSION['user'] = $email;
-        header("Location: dashboard.php");
+        header("Location: index.php");
         exit();
     } else $error = "Passwords didn't match!";
 }

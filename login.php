@@ -31,7 +31,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if ($login) {
-        header("Location: dashboard.php");
+        header("Location: index.php");
         exit();
     } else {
         $error = "Email atau password salah!";

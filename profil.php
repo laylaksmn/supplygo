@@ -76,10 +76,10 @@ $profilepicture = $_SESSION['profilepicture'];
   <header>
     <h2>Profile - <?php echo $_SESSION['nama']; ?></h2>
     <nav>
-      <a href="dashboard.php">Home</a>
+      <a href="index.php">Home</a>
       <a href="#">Order</a>
       <a href="profil.php">Account</a>
-      <a href="logout.php" class="logout"><button>Logout</button></a>
+      <a href="logout.php" class="logout"><button>Log out</button></a>
     </nav>
   </header>
 
@@ -113,9 +113,9 @@ $profilepicture = $_SESSION['profilepicture'];
     const preview = document.getElementById('profilepicturepreview');
     const addphoto = document.getElementById('addphoto');
 
-    // addphoto.addEventListener('click', () => {
-    //   file.click();
-    // });
+    addphoto.addEventListener('click', () => {
+    file.click();
+    });
 
     file.addEventListener('change', (event) => {
       const file = event.target.files[0];

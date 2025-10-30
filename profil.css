@@ -124,4 +124,6 @@ button:hover {
 .photo-actions button:hover {
   transform: scale(0.95);
   opacity: 0.9;
+  background-color: #5f2206;
+  border: 2px solid #5f2206;
 }
