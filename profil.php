@@ -1,84 +1,58 @@
 <?php
 include 'auth.php';
 
-if (!isset($_SESSION['nama'])) {
-  $_SESSION['nama'] = isset($_SESSION['name']) ? $_SESSION['name'] : "Nama";
-}
-if (!isset($_SESSION['bio'])) {
-  $_SESSION['bio'] = "Tambahkan bio";
-}
-if (!isset($_SESSION['address'])) {
-  $_SESSION['address'] = "Tambahkan alamat";
-}
+  $uploadDir = './uploadsPP/';
+  if (!is_dir($uploadDir)) {
+    mkdir($uploadDir, 0755, true);
+  }
 
-$uploadDir = 'uploadsPP/';
-if (!is_dir($uploadDir)) {
-  mkdir($uploadDir, 0755, true);
-}
-
-if (!isset($_SESSION['profilepicture'])) {
-  $_SESSION['profilepicture'] = $uploadDir . 'defaultprofile.jpg';
-}
-
-$profilepicture = $_SESSION['profilepicture'];
+  include_once 'conn.php';
+  $user = $_SESSION['user'];
+  $result = $mysqli->query("SELECT * FROM user WHERE email = '$user'");
+  $userData = $result->fetch_assoc();
+  $name = $userData['name'];
+  $profilepicture = $userData['imagepath'];
+  $bio = !empty($userData['bio']) ? $userData['bio'] : 'Add bio';
+  $address = !empty($userData['address']) ? $userData['address'] : 'Add your address';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+  $name = addslashes(trim($_POST['name']));
+  $bio = addslashes(trim($_POST['bio']));
+  $address = addslashes(trim($_POST['address']));
+  $save = $profilepicture;
 
-  if (isset($_POST['delete_profile'])) {
-    if ($_SESSION['profilepicture'] !== $uploadDir . 'defaultprofile.jpg') {
-      @unlink($_SESSION['profilepicture']);
-    }
-    $_SESSION['profilepicture'] = $uploadDir . 'defaultprofile.jpg';
-    header("Location: profil.php");
-    exit();
-  }
-
-  if (isset($_POST['nama'])) {
-      $_SESSION['nama'] = $_POST['nama'];
-  }
-  if (isset($_POST['bio'])) {
-      $_SESSION['bio'] = $_POST['bio'];
-  }
-  if (isset($_POST['address'])) {
-      $_SESSION['address'] = $_POST['address'];
-  }
-
-  if (isset($_FILES['profilepicture']) && $_FILES['profilepicture']['error'] === UPLOAD_ERR_OK) {
+  if (isset($_POST['deletephoto'])) {
+    $save = $uploadDir . 'defaultprofile.jpg';
+  } else if (isset($_FILES['profilepicture']) && $_FILES['profilepicture']['error'] === UPLOAD_ERR_OK) {
       $fileTmpPath = $_FILES['profilepicture']['tmp_name'];
       $fileName = time() . '_' . $_FILES['profilepicture']['name'];
       $save = $uploadDir . $fileName;
       move_uploaded_file($fileTmpPath, $save);
-
-      if ($_SESSION['profilepicture'] !== $uploadDir . 'defaultprofile.jpg') {
-        @unlink($_SESSION['profilepicture']);
-      }
-
-      $_SESSION['profilepicture'] = $save;
   }
+
+  $stmt = $mysqli->prepare("UPDATE user SET name=?, bio=?, address=?, imagepath=? WHERE email=?");
+  $stmt->bind_param("sssss", $name, $bio, $address, $save, $user);
+  $stmt->execute();
+  $stmt->close();
 
   header("Location: profil.php");
   exit();
 }
-
-$nama = $_SESSION['nama'];
-$bio = $_SESSION['bio'];
-$address = $_SESSION['address'];
-$profilepicture = $_SESSION['profilepicture'];
 ?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Profile</title>
+  <title>SUPPLGO - <?= $name ?></title>
   <link rel="stylesheet" href="profil.css">
 </head>
 <body>
   <header>
-    <h2>Profile - <?php echo $_SESSION['nama']; ?></h2>
+    <h2>SUPPLYGO</h2>
     <nav>
-      <a href="index.php">Home</a>
+      <a href="dashboard.php">Home</a>
       <a href="#">Order</a>
-      <a href="profil.php">Account</a>
+      <a href="profil.php">Profile</a>
       <a href="logout.php" class="logout"><button>Log out</button></a>
     </nav>
   </header>
@@ -86,24 +60,24 @@ $profilepicture = $_SESSION['profilepicture'];
   <main>
     <div class="profile-container">
       <form action="profil.php" method="post" enctype="multipart/form-data">
-  <img src="<?= $profilepicture ?>" id="profilepicturepreview" alt="TAMBAH PROFIL" />
-  <input type="file" name="profilepicture" id="profilepicture" style="display:none;" accept="image/*" /><br>
+      <img src="<?= $profilepicture ?>" id="profilepicturepreview" />
+      <input type="file" name="profilepicture" id="profilepicture" style="display:none;" accept="image/*" /><br>
 
-  <label for="nama">Name</label><br>
-  <input type="text" id="nama" name="nama" value="<?= $nama ?>"><br>
+      <label for="name">Name</label><br>
+      <input type="text" id="name" name="name" value="<?= $name ?>"><br>
 
-  <label for="bio">Bio</label><br>
-  <textarea id="bio" name="bio"><?= $bio ?></textarea><br>
+      <label for="bio">Bio</label><br>
+      <textarea id="bio" name="bio"><?= $bio ?></textarea><br>
 
-  <label for="address">Address</label><br>
-  <textarea id="address" name="address"><?= $address ?></textarea><br>
+      <label for="address">Address</label><br>
+      <textarea id="address" name="address"><?= $address ?></textarea><br>
 
-  <div class="photo-actions">
-    <button type="submit" name="delete_profile" id="deletephoto" class="delete-btn">Delete Photo Profile</button>
-    <button type="button" id="addphoto" class="add-btn">Change Photo Profile</button>
-  </div>
-  <button type="submit" id="edit">Save Profile</button>
-</form>
+      <div class="photo-actions" style="display:none;">
+        <button type="button" id="addphoto" class="add-btn">Change Photo Profile</button>
+        <button type="submit" name="deletephoto" id="deletephoto" class="delete-btn">Delete Photo Profile</button>
+      </div>
+      <button type="submit" id="edit" class="edit">Save Changes</button>
+      </form>
 
     </div>
   </main>
@@ -111,10 +85,14 @@ $profilepicture = $_SESSION['profilepicture'];
   <script>
     const file = document.getElementById('profilepicture');
     const preview = document.getElementById('profilepicturepreview');
+    const actions = document.querySelector('.photo-actions');
     const addphoto = document.getElementById('addphoto');
 
+    preview.addEventListener('click', () => {
+    actions.style.display = 'block';
+    });
     addphoto.addEventListener('click', () => {
-    file.click();
+      file.click();
     });
 
     file.addEventListener('change', (event) => {
