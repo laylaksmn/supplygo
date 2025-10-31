@@ -84,9 +84,9 @@ a {
   background: #ff6600;
   border: none;
   color: white;
-  font-size: 16px;
+  font-size: 14px;
   font-weight: bold;
-  border-radius: 6px;
+  border-radius: 9999px;
   cursor: pointer;
   margin-top: 10px;
 }
@@ -103,4 +103,9 @@ a {
 .login-text a:hover {
   text-decoration: underline;
   color: black;
+}
+
+.error{
+  color: red;
+  margin-bottom: 12px;
 }
