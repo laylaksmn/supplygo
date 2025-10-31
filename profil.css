@@ -1,11 +1,8 @@
 body {
+  height: 100vh;
   margin: 0;
   font-family: Arial, sans-serif;
   background: linear-gradient(to top, #1a1a1a, #ff6600);
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  height: 100vh;
 }
 header {
   background: #fff;
@@ -30,10 +27,6 @@ header h2 {
   margin: 0;
   color: #ff6600;
 }
-nav {
-  display: flex;
-  align-items: center;
-}
 nav a {
   display: inline-block;
   margin-left: 15px;
@@ -52,6 +45,8 @@ main {
   align-items: center;
 }
 .profile-container {
+  display: flex;
+  flex-direction: column;
   background: #fff;
   padding: 50px 40px;
   border-radius: 12px;
@@ -67,13 +62,13 @@ main {
   margin-bottom: 35px;
 }
 label {
-  font-size: 18px;
+  font-size: 14px;
   font-weight: bold;
 }
 input[type=text], textarea {
   margin: 5px 0 20px 0;
   font-family: Arial, sans-serif;
-  font-size: 15px;
+  font-size: 16px;
   box-sizing: border-box;
   border-radius: 8px;
   border: 2px solid #ccc;
@@ -85,45 +80,42 @@ textarea {
   height: 70px;
 }
 button {
-  float: right;
-  background-color: #ff6600;
+  margin-bottom: 12px;
   border: none;
   border-radius: 20px;
   padding: 10px 30px;
   cursor: pointer;
-  color: white;
   font-weight: bold;
-  font-size: 15px;
+  font-size: 14px;
   transition: 0.1s;
 }
-button:hover {
-  background-color: #5f2206;
-  transform: scale(0.95);
+.edit {
+  width: 100%;
+  background-color: #ff6600;
+  color: #fff;
+  margin-top: 24px;
+}
+.logout button {
+  background-color: #ff6600;
+  color: #fff;
+}
+.logout button:hover, .edit:hover {
+  background-color: #e65c00;
 }
 .photo-actions {
-  display: flex;
-  justify-content: flex-end;
-  gap: 15px;
-  margin-bottom: 50px;
+  margin-top: 16px;
 }
-
-.photo-actions .add-btn {
-  background-color: #ff6600;
-  padding: 10px 25px;
-  border-radius: 20px;
+.delete-btn, .add-btn {
+  width: 100%;
+  border: 2px solid #ccc;
+  background-color: #fff;
+  color: #000;
 }
-
-.photo-actions .delete-btn {
-  color: black;
-  border: 2px solid #ff6600;
-  background-color: white;
-  padding: 10px 25px;
-  border-radius: 20px;
+.delete-btn {
+  border: 2px solid #ccc;
+  color: red;
 }
-
 .photo-actions button:hover {
-  transform: scale(0.95);
-  opacity: 0.9;
-  background-color: #5f2206;
-  border: 2px solid #5f2206;
+  border: 2px solid #ccc;
+  background-color: #eeeded;
 }
