@@ -11,7 +11,7 @@ body {
 
 .sidebar {
   width: 240px;
-  background: #000000;
+  background: linear-gradient(to top, #1a1a1a, #ff6600);
   padding: 25px 18px;
   display: flex;
   flex-direction: column;
@@ -151,4 +151,5 @@ body {
 }
 .btn-ad:hover {
   background-color: #e65c00;
+
 }
