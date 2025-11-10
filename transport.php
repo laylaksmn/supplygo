@@ -1,18 +1,21 @@
 <?php
-include 'auth.php';
+session_start();
 include_once 'conn.php';
 
-$user = $_SESSION['user'];
-$result = $mysqli->query("SELECT * FROM user WHERE email = '$user'");
-$userData = $result->fetch_assoc();
-$name = $userData['name'];
+// Pastikan user login
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
+}
 
-// Query untuk mendapatkan statistik kendaraan
+$user = $_SESSION['user'];
+
+// Statistik kendaraan
 $totalKendaraan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan")->fetch_assoc()['total'];
 $tersedia = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Tersedia'")->fetch_assoc()['total'];
 $dalamPerjalanan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Dalam Perjalanan'")->fetch_assoc()['total'];
 
-// Query untuk mendapatkan semua kendaraan
+// Ambil semua kendaraan
 $kendaraanQuery = "SELECT * FROM kendaraan ORDER BY id DESC";
 $kendaraanResult = $mysqli->query($kendaraanQuery);
 ?>
@@ -47,7 +50,7 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
         <p>Manage and track all vehicles in your fleet</p>
       </div>
 
-      <!-- Statistics Cards -->
+      <!-- Statistik -->
       <div class="stats-container">
         <div class="stat-card">
           <h3>Total Kendaraan</h3>
@@ -63,17 +66,13 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
         </div>
       </div>
 
-      <!-- Filter Section -->
+      <!-- Filter -->
       <div class="filter-section">
         <div class="filters">
           <select id="filterStatus" class="filter-select">
             <option value="">Semua Status</option>
             <option value="Tersedia">Tersedia</option>
             <option value="Dalam Perjalanan">Dalam Perjalanan</option>
-          </select>
-
-          <select id="filterKendaraan" class="filter-select">
-            <option value="">Cari kendaraan</option>
           </select>
 
           <select id="filterTipe" class="filter-select">
@@ -86,12 +85,12 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
         <button class="btn-add" onclick="window.location.href='tambah_kendaraan.php'">+ Tambah Kendaraan</button>
       </div>
 
-      <!-- Vehicle Grid -->
+      <!-- Grid kendaraan -->
       <div class="vehicle-grid">
         <?php while($kendaraan = $kendaraanResult->fetch_assoc()): ?>
         <div class="vehicle-card" data-status="<?php echo $kendaraan['status']; ?>" data-tipe="<?php echo $kendaraan['tipe']; ?>">
           <div class="vehicle-image">
-            <img src="<?php echo $kendaraan['image_path'] ? $kendaraan['image_path'] : 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['nama']; ?>">
+            <img src="<?php echo $kendaraan['image_path'] ?: 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['nama']; ?>">
           </div>
           <div class="vehicle-info">
             <div class="vehicle-header">
@@ -102,18 +101,9 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
             </div>
             <p class="vehicle-type"><?php echo $kendaraan['tipe']; ?></p>
             <div class="vehicle-details">
-              <div class="detail-row">
-                <span class="label">Kapasitas:</span>
-                <span class="value"><?php echo $kendaraan['kapasitas']; ?></span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Pengemudi:</span>
-                <span class="value"><?php echo $kendaraan['pengemudi'] ? $kendaraan['pengemudi'] : 'Belum ditentukan'; ?></span>
-              </div>
-              <div class="detail-row">
-                <span class="label">Estimasi Tiba:</span>
-                <span class="value"><?php echo $kendaraan['estimasi_tiba'] ? $kendaraan['estimasi_tiba'] : '-'; ?></span>
-              </div>
+              <div class="detail-row"><span class="label">Kapasitas:</span> <span class="value"><?php echo $kendaraan['kapasitas']; ?></span></div>
+              <div class="detail-row"><span class="label">Pengemudi:</span> <span class="value"><?php echo $kendaraan['pengemudi'] ?: 'Belum ditentukan'; ?></span></div>
+              <div class="detail-row"><span class="label">Estimasi Tiba:</span> <span class="value"><?php echo $kendaraan['estimasi_tiba'] ?: '-'; ?></span></div>
             </div>
             <div class="vehicle-actions">
               <button class="btn-detail" onclick="window.location.href='detail_kendaraan.php?id=<?php echo $kendaraan['id']; ?>'">Lihat Detail</button>
@@ -127,7 +117,6 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
   </main>
 
   <script>
-    // Filter functionality
     const filterStatus = document.getElementById('filterStatus');
     const filterTipe = document.getElementById('filterTipe');
     const vehicleCards = document.querySelectorAll('.vehicle-card');
@@ -139,15 +128,11 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
       vehicleCards.forEach(card => {
         const cardStatus = card.getAttribute('data-status');
         const cardTipe = card.getAttribute('data-tipe');
-        
-        const statusMatch = !statusValue || cardStatus === statusValue;
-        const tipeMatch = !tipeValue || cardTipe === tipeValue;
 
-        if (statusMatch && tipeMatch) {
-          card.style.display = 'block';
-        } else {
-          card.style.display = 'none';
-        }
+        const matchStatus = !statusValue || cardStatus === statusValue;
+        const matchTipe = !tipeValue || cardTipe === tipeValue;
+
+        card.style.display = (matchStatus && matchTipe) ? 'block' : 'none';
       });
     }
 
