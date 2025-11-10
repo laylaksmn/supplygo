@@ -1,41 +1,42 @@
 <?php
 include 'conn.php';
 
-// --- Filter ---
-$filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
-$filterType = isset($_GET['type']) ? $_GET['type'] : '';
+if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+    $name = $_POST['name'];
+    $type = $_POST['type'];
+    $capacity = $_POST['capacity'];
+    $driver = $_POST['driver'];
+    $status = $_POST['status'];
+    $estimation = $_POST['estimation'];
 
-$query = "SELECT * FROM kendaraan WHERE 1";
-if ($filterStatus != '') {
-    $query .= " AND status='$filterStatus'";
+    // upload gambar
+    $targetDir = "uploads/";
+    if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
+    $targetFile = $targetDir . basename($_FILES["kendaraan_image"]["name"]);
+    move_uploaded_file($_FILES["kendaraan_image"]["tmp_name"], $targetFile);
+
+    $query = "INSERT INTO kendaraan (name, type, capacity, driver, status, estimation, kendaraan_image_path)
+              VALUES ('$name', '$type', '$capacity', '$driver', '$status', '$estimation', '$targetFile')";
+    if ($mysqli->query($query)) {
+        header("Location: transport.php");
+        exit();
+    } else {
+        echo "Gagal menyimpan data: " . $mysqli->error;
+    }
 }
-if ($filterType != '') {
-    $query .= " AND type='$filterType'";
-}
-$query .= " ORDER BY kendaraan_id DESC";
-
-$kendaraanResult = $mysqli->query($query);
-
-// Statistik
-$totalKendaraan = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan")->fetch_assoc()['total'];
-$tersedia = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='Tersedia'")->fetch_assoc()['total'];
-$dalamPerjalanan = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='Dalam Perjalanan'")->fetch_assoc()['total'];
-
-// Ambil tipe kendaraan unik
-$tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
 ?>
+
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Transport Management - SUPPLYGO</title>
-  <link rel="stylesheet" href="transport.css">
+    <meta charset="UTF-8">
+    <title>Tambah Kendaraan - SUPPLYGO</title>
+    <link rel="stylesheet" href="transport.css">
 </head>
 <body>
-  <header>
+<header>
     <div class="header-container">
-      <div class="logo">
+       <div class="logo">
         <img src="logo web.png" alt="Logo" class="logo-img">
         <h2>SUPPLYGO</h2>
       </div>
@@ -45,82 +46,47 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
         <a href="transport.php" class="active">Transport</a>
         <a href="tracking.php">Tracking</a>
         <a href="history.php">History</a>
+        <a href="logout.php" class="logout"><button>Log out</button></a>
       </nav>
     </div>
   </header>
 
-  <main>
+<main>
     <div class="content-wrapper">
-      <div class="page-header">
-        <h1>Transport Management</h1>
-        <p>Kelola dan pantau semua kendaraan armada Anda</p>
-      </div>
+        <h1>Tambah Kendaraan Baru</h1>
+        <form action="" method="POST" enctype="multipart/form-data" class="form-add">
+            <label>Nama Kendaraan:</label>
+            <input type="text" name="name" required>
 
-      <div class="stats-container">
-        <div class="stat-card">
-          <h3>Total Kendaraan</h3>
-          <p class="stat-number orange"><?php echo $totalKendaraan; ?></p>
-        </div>
-        <div class="stat-card">
-          <h3>Tersedia</h3>
-          <p class="stat-number green"><?php echo $tersedia; ?></p>
-        </div>
-        <div class="stat-card">
-          <h3>Dalam Perjalanan</h3>
-          <p class="stat-number blue"><?php echo $dalamPerjalanan; ?></p>
-        </div>
-      </div>
+            <label>Tipe Kendaraan:</label>
+            <select name="type" required>
+                <option value="Truck">Truck</option>
+                <option value="Van">Van</option>
+                <option value="Pickup">Pickup</option>
+            </select>
 
-      <form method="GET" class="filter-section">
-        <div class="filters">
-          <select name="status" class="filter-select">
-            <option value="">Semua Status</option>
-            <option value="Tersedia" <?php if($filterStatus=='Tersedia') echo 'selected'; ?>>Tersedia</option>
-            <option value="Dalam Perjalanan" <?php if($filterStatus=='Dalam Perjalanan') echo 'selected'; ?>>Dalam Perjalanan</option>
-          </select>
+            <label>Kapasitas:</label>
+            <input type="text" name="capacity" required>
 
-          <select name="type" class="filter-select">
-            <option value="">Semua Jenis Kendaraan</option>
-            <?php while($row = $tipeResult->fetch_assoc()): ?>
-              <option value="<?php echo $row['type']; ?>" <?php if($filterType==$row['type']) echo 'selected'; ?>>
-                <?php echo $row['type']; ?>
-              </option>
-            <?php endwhile; ?>
-          </select>
+            <label>Pengemudi:</label>
+            <input type="text" name="driver">
 
-          <button type="submit" class="btn-filter">Cari</button>
-        </div>
-        <button type="button" class="btn-add" onclick="window.location.href='tambah_kendaraan.php'">+ Tambah Kendaraan</button>
-      </form>
+            <label>Status:</label>
+            <select name="status" required>
+                <option value="Tersedia">Tersedia</option>
+                <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+            </select>
 
-      <div class="vehicle-grid">
-        <?php if ($kendaraanResult->num_rows > 0): ?>
-          <?php while($kendaraan = $kendaraanResult->fetch_assoc()): ?>
-            <div class="vehicle-card">
-              <div class="vehicle-image">
-                <img src="<?php echo $kendaraan['kendaraan_image_path'] ?: 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['name']; ?>">
-              </div>
-              <div class="vehicle-info">
-                <div class="vehicle-header">
-                  <h3><?php echo $kendaraan['name']; ?></h3>
-                  <span class="status-badge <?php echo strtolower(str_replace(' ', '-', $kendaraan['status'])); ?>">
-                    <?php echo $kendaraan['status']; ?>
-                  </span>
-                </div>
-                <p class="vehicle-type"><?php echo $kendaraan['type']; ?></p>
-                <div class="vehicle-details">
-                  <div class="detail-row"><span>Kapasitas:</span><span><?php echo $kendaraan['capacity']; ?></span></div>
-                  <div class="detail-row"><span>Pengemudi:</span><span><?php echo $kendaraan['driver'] ?: 'Belum ditentukan'; ?></span></div>
-                  <div class="detail-row"><span>Estimasi Tiba:</span><span><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
-                </div>
-              </div>
-            </div>
-          <?php endwhile; ?>
-        <?php else: ?>
-          <p class="no-data">Tidak ada kendaraan ditemukan.</p>
-        <?php endif; ?>
-      </div>
+            <label>Estimasi Tiba:</label>
+            <input type="text" name="estimation">
+
+            <label>Foto Kendaraan:</label>
+            <input type="file" name="kendaraan_image" accept="image/*">
+
+            <button type="submit" class="btn-save">Simpan</button>
+            <button type="button" class="btn-cancel" onclick="window.location.href='transport.php'">Batal</button>
+        </form>
     </div>
-  </main>
+</main>
 </body>
 </html>
