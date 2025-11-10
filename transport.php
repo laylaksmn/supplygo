@@ -1,40 +1,35 @@
 <?php
-include 'conn.php';
+session_start();
+include 'auth.php';
+include_once 'conn.php';
 
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $name = $_POST['name'];
-    $type = $_POST['type'];
-    $capacity = $_POST['capacity'];
-    $driver = $_POST['driver'];
-    $status = $_POST['status'];
-    $estimation = $_POST['estimation'];
-
-    // upload gambar
-    $targetDir = "uploads/";
-    if (!file_exists($targetDir)) mkdir($targetDir, 0777, true);
-    $targetFile = $targetDir . basename($_FILES["kendaraan_image"]["name"]);
-    move_uploaded_file($_FILES["kendaraan_image"]["tmp_name"], $targetFile);
-
-    $query = "INSERT INTO kendaraan (name, type, capacity, driver, status, estimation, kendaraan_image_path)
-              VALUES ('$name', '$type', '$capacity', '$driver', '$status', '$estimation', '$targetFile')";
-    if ($mysqli->query($query)) {
-        header("Location: transport.php");
-        exit();
-    } else {
-        echo "Gagal menyimpan data: " . $mysqli->error;
-    }
+// Pastikan user login
+if (!isset($_SESSION['user'])) {
+    header("Location: login.php");
+    exit();
 }
-?>
 
+$user = $_SESSION['user'];
+
+// Statistik kendaraan
+$totalKendaraan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan")->fetch_assoc()['total'];
+$tersedia = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Tersedia'")->fetch_assoc()['total'];
+$dalamPerjalanan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Dalam Perjalanan'")->fetch_assoc()['total'];
+
+// Ambil semua kendaraan
+$kendaraanQuery = "SELECT * FROM kendaraan ORDER BY kendaraan_id DESC";
+$kendaraanResult = $mysqli->query($kendaraanQuery);
+?>
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <title>Tambah Kendaraan - SUPPLYGO</title>
-    <link rel="stylesheet" href="transport.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transport Management - SUPPLYGO</title>
+  <link rel="stylesheet" href="transport.css">
 </head>
 <body>
-<header>
+  <header>
     <div class="header-container">
        <div class="logo">
         <img src="logo web.png" alt="Logo" class="logo-img">
@@ -51,42 +46,101 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </div>
   </header>
 
-<main>
+  <main>
     <div class="content-wrapper">
-        <h1>Tambah Kendaraan Baru</h1>
-        <form action="" method="POST" enctype="multipart/form-data" class="form-add">
-            <label>Nama Kendaraan:</label>
-            <input type="text" name="name" required>
+      <div class="page-header">
+        <h1>Transport Management</h1>
+        <p>Manage and track all vehicles in your fleet</p>
+      </div>
 
-            <label>Tipe Kendaraan:</label>
-            <select name="type" required>
-                <option value="Truck">Truck</option>
-                <option value="Van">Van</option>
-                <option value="Pickup">Pickup</option>
-            </select>
+      <!-- Statistik -->
+      <div class="stats-container">
+        <div class="stat-card">
+          <h3>Total Kendaraan</h3>
+          <p class="stat-number orange"><?php echo $totalKendaraan; ?></p>
+        </div>
+        <div class="stat-card">
+          <h3>Tersedia</h3>
+          <p class="stat-number green"><?php echo $tersedia; ?></p>
+        </div>
+        <div class="stat-card">
+          <h3>Dalam Perjalanan</h3>
+          <p class="stat-number blue"><?php echo $dalamPerjalanan; ?></p>
+        </div>
+      </div>
 
-            <label>Kapasitas:</label>
-            <input type="text" name="capacity" required>
+      <!-- Filter -->
+      <div class="filter-section">
+        <div class="filters">
+          <select id="filterStatus" class="filter-select">
+            <option value="">Semua Status</option>
+            <option value="Tersedia">Tersedia</option>
+            <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+          </select>
 
-            <label>Pengemudi:</label>
-            <input type="text" name="driver">
+          <select id="filterTipe" class="filter-select">
+            <option value="">Semua Tipe</option>
+            <option value="Truck">Truck</option>
+            <option value="Van">Van</option>
+            <option value="Pickup">Pickup</option>
+          </select>
+        </div>
+        <button class="btn-add" onclick="window.location.href='tambah_kendaraan.php'">+ Tambah Kendaraan</button>
+      </div>
 
-            <label>Status:</label>
-            <select name="status" required>
-                <option value="Tersedia">Tersedia</option>
-                <option value="Dalam Perjalanan">Dalam Perjalanan</option>
-            </select>
-
-            <label>Estimasi Tiba:</label>
-            <input type="text" name="estimation">
-
-            <label>Foto Kendaraan:</label>
-            <input type="file" name="kendaraan_image" accept="image/*">
-
-            <button type="submit" class="btn-save">Simpan</button>
-            <button type="button" class="btn-cancel" onclick="window.location.href='transport.php'">Batal</button>
-        </form>
+      <!-- Grid kendaraan -->
+      <div class="vehicle-grid">
+        <?php while($kendaraan = $kendaraanResult->fetch_assoc()): ?>
+        <div class="vehicle-card" data-status="<?php echo $kendaraan['status']; ?>" data-tipe="<?php echo $kendaraan['type']; ?>">
+          <div class="vehicle-image">
+            <img src="<?php echo $kendaraan['kendaraan_image_path'] ?: 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['name']; ?>">
+          </div>
+          <div class="vehicle-info">
+            <div class="vehicle-header">
+              <h3><?php echo $kendaraan['name']; ?></h3>
+              <span class="status-badge <?php echo strtolower(str_replace(' ', '-', $kendaraan['status'])); ?>">
+                <?php echo $kendaraan['status']; ?>
+              </span>
+            </div>
+            <p class="vehicle-type"><?php echo $kendaraan['type']; ?></p>
+            <div class="vehicle-details">
+              <div class="detail-row"><span class="label">Kapasitas:</span> <span class="value"><?php echo $kendaraan['capacity']; ?></span></div>
+              <div class="detail-row"><span class="label">Pengemudi:</span> <span class="value"><?php echo $kendaraan['driver'] ?: 'Belum ditentukan'; ?></span></div>
+              <div class="detail-row"><span class="label">Estimasi Tiba:</span> <span class="value"><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
+            </div>
+            <div class="vehicle-actions">
+              <button class="btn-detail" onclick="window.location.href='detail_kendaraan.php?id=<?php echo $kendaraan['kendaraan_id']; ?>'">Lihat Detail</button>
+              <button class="btn-locate">Lacak</button>
+            </div>
+          </div>
+        </div>
+        <?php endwhile; ?>
+      </div>
     </div>
-</main>
+  </main>
+
+  <script>
+    const filterStatus = document.getElementById('filterStatus');
+    const filterTipe = document.getElementById('filterTipe');
+    const vehicleCards = document.querySelectorAll('.vehicle-card');
+
+    function applyFilters() {
+      const statusValue = filterStatus.value;
+      const tipeValue = filterTipe.value;
+
+      vehicleCards.forEach(card => {
+        const cardStatus = card.getAttribute('data-status');
+        const cardTipe = card.getAttribute('data-tipe');
+
+        const matchStatus = !statusValue || cardStatus === statusValue;
+        const matchTipe = !tipeValue || cardTipe === tipeValue;
+
+        card.style.display = (matchStatus && matchTipe) ? 'block' : 'none';
+      });
+    }
+
+    filterStatus.addEventListener('change', applyFilters);
+    filterTipe.addEventListener('change', applyFilters);
+  </script>
 </body>
 </html>
