@@ -29,8 +29,11 @@ $name = $userData['name'];
     <img src="logo web.png" alt="Logo" class="logo">
     <h2>SUPPLYGO</h2>
     <div class="nav">
-      <a href="dashboard.php">Dashboard</a>
-      <a href="#">Order</a>
+      <a href="dashboard.php" class="active">Dashboard</a>
+      <a href="market.php">Market</a>
+      <a href="transport.php">Transport</a>
+      <a href="tracking.php">Tracking</a>
+      <a href="history.php">History</a>
       <a href="profil.php">Account</a>
       <a href="logout.php">Log out</a>
     </div>
