@@ -1,23 +1,28 @@
 <?php
-session_start();
-include_once 'conn.php';
+include 'conn.php';
 
-// Pastikan user login
-if (!isset($_SESSION['user'])) {
-    header("Location: login.php");
-    exit();
+// --- Filter ---
+$filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
+$filterType = isset($_GET['type']) ? $_GET['type'] : '';
+
+$query = "SELECT * FROM kendaraan WHERE 1";
+if ($filterStatus != '') {
+    $query .= " AND status='$filterStatus'";
 }
+if ($filterType != '') {
+    $query .= " AND type='$filterType'";
+}
+$query .= " ORDER BY kendaraan_id DESC";
 
-$user = $_SESSION['user'];
+$kendaraanResult = $mysqli->query($query);
 
-// Statistik kendaraan
-$totalKendaraan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan")->fetch_assoc()['total'];
-$tersedia = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Tersedia'")->fetch_assoc()['total'];
-$dalamPerjalanan = $mysqli->query("SELECT COUNT(*) as total FROM kendaraan WHERE status = 'Dalam Perjalanan'")->fetch_assoc()['total'];
+// Statistik
+$totalKendaraan = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan")->fetch_assoc()['total'];
+$tersedia = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='Tersedia'")->fetch_assoc()['total'];
+$dalamPerjalanan = $mysqli->query("SELECT COUNT(*) AS total FROM kendaraan WHERE status='Dalam Perjalanan'")->fetch_assoc()['total'];
 
-// Ambil semua kendaraan
-$kendaraanQuery = "SELECT * FROM kendaraan ORDER BY id DESC";
-$kendaraanResult = $mysqli->query($kendaraanQuery);
+// Ambil tipe kendaraan unik
+$tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
 ?>
 <!DOCTYPE html>
 <html lang="id">
@@ -36,6 +41,7 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
       </div>
       <nav>
         <a href="dashboard.php">Home</a>
+        <a href="market.php">Market</a>
         <a href="transport.php" class="active">Transport</a>
         <a href="tracking.php">Tracking</a>
         <a href="history.php">History</a>
@@ -47,10 +53,9 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
     <div class="content-wrapper">
       <div class="page-header">
         <h1>Transport Management</h1>
-        <p>Manage and track all vehicles in your fleet</p>
+        <p>Kelola dan pantau semua kendaraan armada Anda</p>
       </div>
 
-      <!-- Statistik -->
       <div class="stats-container">
         <div class="stat-card">
           <h3>Total Kendaraan</h3>
@@ -66,78 +71,56 @@ $kendaraanResult = $mysqli->query($kendaraanQuery);
         </div>
       </div>
 
-      <!-- Filter -->
-      <div class="filter-section">
+      <form method="GET" class="filter-section">
         <div class="filters">
-          <select id="filterStatus" class="filter-select">
+          <select name="status" class="filter-select">
             <option value="">Semua Status</option>
-            <option value="Tersedia">Tersedia</option>
-            <option value="Dalam Perjalanan">Dalam Perjalanan</option>
+            <option value="Tersedia" <?php if($filterStatus=='Tersedia') echo 'selected'; ?>>Tersedia</option>
+            <option value="Dalam Perjalanan" <?php if($filterStatus=='Dalam Perjalanan') echo 'selected'; ?>>Dalam Perjalanan</option>
           </select>
 
-          <select id="filterTipe" class="filter-select">
-            <option value="">Semua Tipe</option>
-            <option value="Truck">Truck</option>
-            <option value="Van">Van</option>
-            <option value="Pickup">Pickup</option>
+          <select name="type" class="filter-select">
+            <option value="">Semua Jenis Kendaraan</option>
+            <?php while($row = $tipeResult->fetch_assoc()): ?>
+              <option value="<?php echo $row['type']; ?>" <?php if($filterType==$row['type']) echo 'selected'; ?>>
+                <?php echo $row['type']; ?>
+              </option>
+            <?php endwhile; ?>
           </select>
+
+          <button type="submit" class="btn-filter">Cari</button>
         </div>
-        <button class="btn-add" onclick="window.location.href='tambah_kendaraan.php'">+ Tambah Kendaraan</button>
-      </div>
+        <button type="button" class="btn-add" onclick="window.location.href='tambah_kendaraan.php'">+ Tambah Kendaraan</button>
+      </form>
 
-      <!-- Grid kendaraan -->
       <div class="vehicle-grid">
-        <?php while($kendaraan = $kendaraanResult->fetch_assoc()): ?>
-        <div class="vehicle-card" data-status="<?php echo $kendaraan['status']; ?>" data-tipe="<?php echo $kendaraan['tipe']; ?>">
-          <div class="vehicle-image">
-            <img src="<?php echo $kendaraan['image_path'] ?: 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['nama']; ?>">
-          </div>
-          <div class="vehicle-info">
-            <div class="vehicle-header">
-              <h3><?php echo $kendaraan['nama']; ?></h3>
-              <span class="status-badge <?php echo strtolower(str_replace(' ', '-', $kendaraan['status'])); ?>">
-                <?php echo $kendaraan['status']; ?>
-              </span>
+        <?php if ($kendaraanResult->num_rows > 0): ?>
+          <?php while($kendaraan = $kendaraanResult->fetch_assoc()): ?>
+            <div class="vehicle-card">
+              <div class="vehicle-image">
+                <img src="<?php echo $kendaraan['kendaraan_image_path'] ?: 'truck-placeholder.png'; ?>" alt="<?php echo $kendaraan['name']; ?>">
+              </div>
+              <div class="vehicle-info">
+                <div class="vehicle-header">
+                  <h3><?php echo $kendaraan['name']; ?></h3>
+                  <span class="status-badge <?php echo strtolower(str_replace(' ', '-', $kendaraan['status'])); ?>">
+                    <?php echo $kendaraan['status']; ?>
+                  </span>
+                </div>
+                <p class="vehicle-type"><?php echo $kendaraan['type']; ?></p>
+                <div class="vehicle-details">
+                  <div class="detail-row"><span>Kapasitas:</span><span><?php echo $kendaraan['capacity']; ?></span></div>
+                  <div class="detail-row"><span>Pengemudi:</span><span><?php echo $kendaraan['driver'] ?: 'Belum ditentukan'; ?></span></div>
+                  <div class="detail-row"><span>Estimasi Tiba:</span><span><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
+                </div>
+              </div>
             </div>
-            <p class="vehicle-type"><?php echo $kendaraan['tipe']; ?></p>
-            <div class="vehicle-details">
-              <div class="detail-row"><span class="label">Kapasitas:</span> <span class="value"><?php echo $kendaraan['kapasitas']; ?></span></div>
-              <div class="detail-row"><span class="label">Pengemudi:</span> <span class="value"><?php echo $kendaraan['pengemudi'] ?: 'Belum ditentukan'; ?></span></div>
-              <div class="detail-row"><span class="label">Estimasi Tiba:</span> <span class="value"><?php echo $kendaraan['estimasi_tiba'] ?: '-'; ?></span></div>
-            </div>
-            <div class="vehicle-actions">
-              <button class="btn-detail" onclick="window.location.href='detail_kendaraan.php?id=<?php echo $kendaraan['id']; ?>'">Lihat Detail</button>
-              <button class="btn-locate">Lacak</button>
-            </div>
-          </div>
-        </div>
-        <?php endwhile; ?>
+          <?php endwhile; ?>
+        <?php else: ?>
+          <p class="no-data">Tidak ada kendaraan ditemukan.</p>
+        <?php endif; ?>
       </div>
     </div>
   </main>
-
-  <script>
-    const filterStatus = document.getElementById('filterStatus');
-    const filterTipe = document.getElementById('filterTipe');
-    const vehicleCards = document.querySelectorAll('.vehicle-card');
-
-    function applyFilters() {
-      const statusValue = filterStatus.value;
-      const tipeValue = filterTipe.value;
-
-      vehicleCards.forEach(card => {
-        const cardStatus = card.getAttribute('data-status');
-        const cardTipe = card.getAttribute('data-tipe');
-
-        const matchStatus = !statusValue || cardStatus === statusValue;
-        const matchTipe = !tipeValue || cardTipe === tipeValue;
-
-        card.style.display = (matchStatus && matchTipe) ? 'block' : 'none';
-      });
-    }
-
-    filterStatus.addEventListener('change', applyFilters);
-    filterTipe.addEventListener('change', applyFilters);
-  </script>
 </body>
 </html>
