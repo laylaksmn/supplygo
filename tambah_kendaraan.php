@@ -1,4 +1,5 @@
 <?php
+include 'auth.php';
 include 'conn.php';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
@@ -36,15 +37,20 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
 <header>
     <div class="header-container">
-        <div class="logo">
-            <img src="logo web.png" alt="Logo" class="logo-img">
-            <h2>SUPPLYGO</h2>
-        </div>
-        <nav>
-            <a href="transport.php" class="active">Transport</a>
-        </nav>
+       <div class="logo">
+        <img src="logo web.png" alt="Logo" class="logo-img">
+        <h2>SUPPLYGO</h2>
+      </div>
+      <nav>
+        <a href="dashboard.php">Home</a>
+        <a href="market.php">Market</a>
+        <a href="transport.php" class="active">Transport</a>
+        <a href="tracking.php">Tracking</a>
+        <a href="history.php">History</a>
+        <a href="logout.php" class="logout"><button>Log out</button></a>
+      </nav>
     </div>
-</header>
+  </header>
 
 <main>
     <div class="content-wrapper">
