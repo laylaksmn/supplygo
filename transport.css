@@ -298,7 +298,7 @@ nav a.active {
   }
 }
 
-.btn-confirm {
+.btn-pilih {
   background-color: orange;
   color: white;
   border: none;
@@ -311,7 +311,7 @@ nav a.active {
   font-weight: 600;
 }
 
-.btn-confirm:hover {
+.btn-pilih:hover {
   background-color: #218838;
 }
 
