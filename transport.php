@@ -138,3 +138,4 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
   </main>
 </body>
 </html>
+
