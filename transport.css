@@ -297,3 +297,25 @@ nav a.active {
     grid-template-columns: 1fr;
   }
 }
+
+.btn-confirm {
+  background-color: orange;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 12px;
+  transition: background-color 0.3s ease;
+  width: 100%;
+  font-weight: 600;
+}
+
+.btn-confirm:hover {
+  background-color: #218838;
+}
+
+.confirm-form {
+  margin-top: 10px;
+}
+
