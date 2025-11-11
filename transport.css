@@ -2,7 +2,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: "Poppins", sans-serif;
-  background: linear-gradient(180deg, #000000 0%, #cc5200 60%, #ff8800 100%);
+  background: white;
   min-height: 100vh;
   color: #333;
 }
@@ -35,13 +35,13 @@ header {
 }
 
 header h2 {
-  color: #fff;
+  color: orange;
   font-size: 22px;
   letter-spacing: 1px;
 }
 
 nav a {
-  color: white;
+  color: orange;
   text-decoration: none;
   margin: 0 10px;
   font-weight: 500;
@@ -50,13 +50,13 @@ nav a {
 
 nav a:hover,
 nav a.active {
-  color: #ffcc80;
+  color: orange;
 }
 
 .logout button {
-  background-color: #ff6600;
+  background-color: orange;
   border: none;
-  color: white;
+  color: orange;
   padding: 8px 14px;
   border-radius: 6px;
   cursor: pointer;
@@ -64,14 +64,14 @@ nav a.active {
 }
 
 .logout button:hover {
-  background-color: #e65c00;
+  background-color: orange;
 }
 
 .content-wrapper {
   width: 90%;
   max-width: 1200px;
   margin: 40px auto;
-  background-color: rgba(255, 255, 255, 0.97);
+  background-color: white;
   border-radius: 14px;
   padding: 30px;
   box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
@@ -80,7 +80,7 @@ nav a.active {
 .page-header h1 {
   margin: 0;
   font-size: 28px;
-  color: #ff6600;
+  color: orange;
 }
 
 .page-header p {
@@ -115,7 +115,7 @@ nav a.active {
 }
 
 .stat-number.orange {
-  color: #ff6600;
+  color: orange;
 }
 
 .stat-number.green {
@@ -148,11 +148,11 @@ nav a.active {
 }
 
 .filter-select:focus {
-  border-color: #ff6600;
+  border-color: orange;
 }
 
 .btn-add {
-  background-color: #ff6600;
+  background-color: orange;
   color: white;
   border: none;
   padding: 10px 16px;
@@ -163,7 +163,7 @@ nav a.active {
 }
 
 .btn-add:hover {
-  background-color: #e65c00;
+  background-color: orange;
 }
 
 .vehicle-grid {
@@ -265,12 +265,12 @@ nav a.active {
 }
 
 .btn-detail {
-  background-color: #ff6600;
+  background-color: orange;
   color: white;
 }
 
 .btn-detail:hover {
-  background-color: #e65c00;
+  background-color: orange;
 }
 
 .btn-locate {
