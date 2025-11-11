@@ -118,13 +118,13 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
                 <div class="vehicle-details">
                   <div class="detail-row"><span>Kapasitas:</span><span><?php echo $kendaraan['capacity']; ?></span></div>
                   <div class="detail-row"><span>Pengemudi:</span><span><?php echo $kendaraan['driver'] ?: 'Belum ditentukan'; ?></span></div>
-                  <div class="detail-row"><span>Estimasi Tiba:</span><span><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
+                  <div class="detail-row"><span></span><span><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
                 </div>
 
                 <?php if ($kendaraan['status'] == 'Tersedia'): ?>
                   <form method="GET" action="transport.php" class="confirm-form" onsubmit="return confirm('Konfirmasi kendaraan ini untuk berangkat?');">
-                    <input type="hidden" name="konfirmasi_id" value="<?php echo $kendaraan['kendaraan_id']; ?>">
-                    <button type="submit" class="btn-confirm">Konfirmasi</button>
+                    <input type="hidden" name="pilih_id" value="<?php echo $kendaraan['kendaraan_id']; ?>">
+                    <button type="submit" class="btn-pilih">Pilih</button>
                   </form>
                 <?php endif; ?>
               </div>
