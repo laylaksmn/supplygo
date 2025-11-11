@@ -1,6 +1,14 @@
 <?php
 include 'conn.php';
 
+if (isset($_GET['konfirmasi_id'])) {
+    $id = $_GET['konfirmasi_id'];
+
+    $mysqli->query("UPDATE kendaraan SET status='Dalam Perjalanan' WHERE kendaraan_id='$id'");
+    header("Location: tracking.php?kendaraan_id=$id");
+    exit();
+}
+
 $filterStatus = isset($_GET['status']) ? $_GET['status'] : '';
 $filterType = isset($_GET['type']) ? $_GET['type'] : '';
 
@@ -112,6 +120,13 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
                   <div class="detail-row"><span>Pengemudi:</span><span><?php echo $kendaraan['driver'] ?: 'Belum ditentukan'; ?></span></div>
                   <div class="detail-row"><span>Estimasi Tiba:</span><span><?php echo $kendaraan['estimation'] ?: '-'; ?></span></div>
                 </div>
+
+                <?php if ($kendaraan['status'] == 'Tersedia'): ?>
+                  <form method="GET" action="transport.php" class="confirm-form" onsubmit="return confirm('Konfirmasi kendaraan ini untuk berangkat?');">
+                    <input type="hidden" name="konfirmasi_id" value="<?php echo $kendaraan['kendaraan_id']; ?>">
+                    <button type="submit" class="btn-confirm">Konfirmasi</button>
+                  </form>
+                <?php endif; ?>
               </div>
             </div>
           <?php endwhile; ?>
