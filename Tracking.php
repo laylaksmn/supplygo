@@ -33,7 +33,7 @@ $resultProducts = $mysqli->query($sqlProducts);
   <meta charset="UTF-8" />
   <title>Tracking - SUPPLYGO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <link rel="stylesheet" href="tracking.css" />
+  <link rel="stylesheet" href="Tracking.css" />
 </head>
 <body>
   <header class="navbar">
@@ -199,3 +199,4 @@ $resultProducts = $mysqli->query($sqlProducts);
   </div>
 </body>
 </html>
+
