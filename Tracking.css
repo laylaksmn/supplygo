@@ -29,9 +29,7 @@ body {
   font-family: "Segoe UI", system-ui, -apple-system, Arial, sans-serif;
   color: var(--ink);
   min-height: 100vh;
-  display: flex;
 
-  /* BG hitam dari atas, oranye dari bawah (vertikal) */
   background: linear-gradient(
     to bottom,
     var(--bg-top) 0%,
@@ -39,73 +37,93 @@ body {
     var(--bg-bottom) 100%
   );
   background-attachment: fixed;
-}
 
-/* ========= Sidebar ========= */
-.sidebar {
-  width: 240px;
-  background: transparent; /* menyatu dengan gradien */
-  padding: 24px 18px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-}
-.sidebar img.logo {
-  width: 95px;
-  height: 95px;
-  object-fit: contain;
-  border-radius: 50%;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.08);
-}
-.sidebar h2 {
-  margin: 0 0 20px;
-  font-size: 22px;
-  font-weight: 900;
-  letter-spacing: 0.6px;
-  color: #fff;
-}
-.nav {
-  width: 100%;
-  display: grid;
-  gap: 8px;
-}
-.nav a {
   display: block;
-  padding: 12px 14px;
-  border-radius: 8px;
-  text-decoration: none;
-  color: #fff;
-  font-weight: 600;
-  transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
-}
-.nav a:hover {
-  background: rgba(255, 255, 255, 0.18);
-  transform: translateX(4px);
-}
-.nav a.active {
-  background: rgba(255, 255, 255, 0.25);
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
-/* ========= Main ========= */
+.navbar {
+  position: fixed;
+  inset: 0 0 auto 0; /* top:0; left:0; right:0 */
+  height: 70px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* brand kiri, menu kanan */
+  padding: 0 24px;
+  z-index: 1000;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.logo {
+  width: 36px;
+  height: 36px;
+  object-fit: contain;
+  border-radius: 8px;
+  background: rgba(0, 0, 0, 0.04);
+  padding: 4px;
+}
+
+.brand-name {
+  font-weight: 900;
+  font-size: 18px;
+  letter-spacing: 0.4px;
+  color: #111; /* teks hitam */
+}
+
+/* Menu kanan */
+.menu {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+
+.menu a {
+  color: #111; /* teks hitam */
+  text-decoration: none;
+  font-weight: 800;
+  padding: 10px 12px;
+  border-radius: 8px;
+  transition: background 0.18s, color 0.18s, transform 0.12s;
+}
+
+.menu a:hover {
+  background: #f5f5f5;
+}
+.menu a.active {
+  color: var(--brand);
+} /* oranye aktif */
+
+/* ========= Main (container konten) ========= */
 .main {
-  flex: 1;
+  /* beri jarak dari navbar fixed */
+  margin-top: 70px; /* 70px + ruang napas */
   padding: 30px;
   display: flex;
   flex-direction: column;
   gap: 24px;
   min-width: 0;
 
-  /* tetap transparan & blur */
+  /* panel kaca */
   background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(6px);
-  border-radius: 30px 0 0 30px;
-  margin: 20px;
+  border-radius: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
 
-  /* tambah tinggi agar efeknya merata ke bawah */
-  min-height: 135vh; /* bisa ubah 130vh jika konten banyak */
+  /* agar efek terlihat panjang */
+  min-height: 160vh; /* sesuaikan bila konten banyak */
+}
+
+/* Scroll offset untuk anchor (kalau ada #link) supaya tidak ketutup navbar */
+:target {
+  scroll-margin-top: 100px;
 }
 
 /* ========= Header ========= */
@@ -185,8 +203,6 @@ body {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-md);
   padding: 18px;
-
-  /* jarak jelas agar tidak “tabrakan” */
   margin-bottom: 28px;
 }
 
@@ -222,7 +238,7 @@ body {
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
 }
 
-/* Base */
+/* Chips */
 .chip {
   padding: 10px 18px;
   border-radius: 999px;
@@ -230,8 +246,6 @@ body {
   cursor: pointer;
   transition: 0.25s;
 }
-
-/* VARIAN A — untuk header gelap */
 .chips--dark .chip {
   background: transparent;
   border: 2px solid rgba(255, 255, 255, 0.4);
@@ -247,8 +261,6 @@ body {
   background: rgba(255, 102, 0, 0.08);
   box-shadow: 0 0 8px rgba(255, 102, 0, 0.18);
 }
-
-/* VARIAN B — untuk panel putih */
 .chips--light .chip {
   background: #fff;
   border: 2px solid #d0d0d0;
@@ -264,8 +276,6 @@ body {
   border-color: #ff6600;
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.15);
 }
-
-/* Aksesibilitas */
 .chip:focus-visible {
   outline: none;
   box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.3);
@@ -286,7 +296,7 @@ table {
 }
 thead th {
   position: sticky;
-  top: 0;
+  top: 0; /* di dalam .table-wrap (scroll container) */
   z-index: 1;
   background: #f7f7f7 !important;
   color: #666 !important;
@@ -425,6 +435,144 @@ tbody tr:hover {
   transform: translateY(1px);
 }
 
+.action-cell {
+  white-space: nowrap;
+}
+.action-cell a,
+.action-cell button {
+  font-size: 15px;
+  font-weight: 700;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+}
+.action-edit {
+  color: #2563eb;
+  text-decoration: none;
+}
+.action-edit:hover {
+  text-decoration: underline;
+}
+.action-delete {
+  color: #b91c1c;
+  text-decoration: none;
+}
+.action-delete:hover {
+  text-decoration: underline;
+}
+
+/* ========= Inner Page: Form Produk ========= */
+.inner-page {
+  gap: 20px;
+}
+.form-card {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 24px;
+}
+.form-alert {
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  color: #b91c1c;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+.product-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px 20px;
+}
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.form-group label {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--muted);
+}
+.form-group input,
+.form-group select {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 2px solid #dcdcdc;
+  font-size: 14px;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.form-group input::placeholder {
+  color: #9aa0a6;
+  font-weight: 500;
+}
+.form-group input:focus,
+.form-group select:focus {
+  border-color: var(--brand);
+  box-shadow: 0 0 0 3px rgba(255, 102, 0, 0.12);
+  background: #fff;
+}
+.form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+  margin-top: 4px;
+}
+.btn-primary {
+  border: none;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--brand), var(--brand-dark));
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+  font-size: 14px;
+  transition: filter 0.2s ease, transform 0.1s ease, box-shadow 0.2s;
+}
+.btn-primary:hover {
+  filter: brightness(1.05);
+  box-shadow: 0 10px 20px rgba(255, 102, 0, 0.25);
+}
+.btn-primary:active {
+  transform: translateY(1px);
+}
+.btn-secondary {
+  padding: 10px 16px;
+  border-radius: 999px;
+  border: 2px solid #d1d5db;
+  background: #fff;
+  color: #374151;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.2s, border-color 0.2s, color 0.2s;
+}
+.btn-secondary:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+  color: #111827;
+}
+
+/* Responsif form */
+@media (max-width: 720px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* ========= Responsive ========= */
 @media (max-width: 1080px) {
   .stats {
@@ -436,22 +584,21 @@ tbody tr:hover {
     grid-template-columns: 1fr;
   }
 }
+
 @media (max-width: 720px) {
-  .sidebar {
-    display: none;
+  .navbar {
+    height: 64px;
+    padding: 0 16px;
   }
-  body {
-    display: block;
+  .menu {
+    gap: 12px;
+  }
+  .menu a {
+    padding: 8px 10px;
+    font-weight: 800;
   }
   .main {
-    margin: 0;
-    border-radius: 0;
-    padding: 20px;
-  }
-  .stats {
-    grid-template-columns: 1fr;
-  }
-  .header h1 {
-    font-size: 24px;
+    margin-top: 88px;
+    border-radius: 20px;
   }
 }
