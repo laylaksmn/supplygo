@@ -3,9 +3,15 @@ include 'conn.php';
 
 if (isset($_GET['konfirmasi_id'])) {
     $id = $_GET['konfirmasi_id'];
-
     $mysqli->query("UPDATE kendaraan SET status='Dalam Perjalanan' WHERE kendaraan_id='$id'");
     header("Location: tracking.php?kendaraan_id=$id");
+    exit();
+}
+
+if (isset($_GET['hapus_id'])) {
+    $hapusId = $_GET['hapus_id'];
+    $mysqli->query("DELETE FROM kendaraan WHERE kendaraan_id='$hapusId'");
+    header("Location: transport.php");
     exit();
 }
 
@@ -127,6 +133,11 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
                     <button type="submit" class="btn-pilih">Pilih</button>
                   </form>
                 <?php endif; ?>
+
+                <form method="GET" action="transport.php" class="delete-form" onsubmit="return confirm('Yakin ingin menghapus kendaraan ini?');">
+                  <input type="hidden" name="hapus_id" value="<?php echo $kendaraan['kendaraan_id']; ?>">
+                  <button type="submit" class="btn-hapus">🗑 Hapus</button>
+                </form>
               </div>
             </div>
           <?php endwhile; ?>
