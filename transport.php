@@ -43,7 +43,7 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
   <header>
     <div class="header-container">
       <div class="logo">
-        <img src="logo web.png" alt="Logo" class="logo-img">
+        <img src="logo Web.png" alt="Logo" class="logo-img">
         <h2>SUPPLYGO</h2>
       </div>
       <nav>
@@ -138,4 +138,3 @@ $tipeResult = $mysqli->query("SELECT DISTINCT type FROM kendaraan");
   </main>
 </body>
 </html>
-
