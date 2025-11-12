@@ -1,6 +1,9 @@
+* {
+  font-family: "Poppins", sans-serif;
+}
+
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: linear-gradient(to bottom, #1a1a1a, #ff6600);
   display: flex;
   justify-content: center;
@@ -70,7 +73,7 @@ input[type="password"] {
   border: none;
   color: white;
   font-size: 14px;
-  font-weight: bold;
+  font-weight: 600;
   border-radius: 9999px;
   cursor: pointer;
   margin-top: 24px;
