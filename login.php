@@ -1,21 +1,32 @@
 <?php
 session_start();
 
+// 1. Redirect Saat Sudah Login
+if (isset($_SESSION['user'])) {
+    header("Location: dashboard.php");
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include_once 'conn.php';
-    $email = addslashes(trim($_POST['email']));
-    $password = addslashes(trim($_POST['password']));
+    // Menggunakan Prepared Statement
+    $email = trim($_POST['email']);
+    $password_raw = $_POST['password'];
 
-    $stmt = $mysqli->prepare("SELECT password FROM user WHERE email=?");
+    $stmt = $mysqli->prepare("SELECT password, username FROM user WHERE email=?");
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-    $getPassword = $result->fetch_object();
-    if ($password !== $getPassword->password){
+    $userData = $result->fetch_object();
+
+    if (!$userData || !password_verify($password_raw, $userData->password)){
+      // 2. Cek password dengan password_verify()
       header('Location: login.php?invalid=1');
       die;
     }
-    $_SESSION['user'] = $email;
+    
+    // Set sesi dengan username
+    $_SESSION['user'] = $userData->username;
     header("Location: dashboard.php");
     die;
 }
@@ -37,14 +48,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
       <label>Password</label>
       <input type="password" name="password" required placeholder="Enter password">
 
-      <!-- <div class="options">
-        <label><input type="checkbox" name="remember"> Remember Me</label>
-        <a href="#">Forgot Password?</a>
-      </div> -->
-
       <button type="submit" class="btn-login">LOG IN</button>
       <?php if (isset($_GET['invalid'])): ?>
-      <p class="error">Email or password wrong</p>
+      <p class="error">Email atau password salah</p>
       <?php endif; ?>
 
       <p class="signup-text"> 
