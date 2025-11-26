@@ -26,7 +26,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     
     // Set sesi dengan username
-    $_SESSION['user'] = $userData->username;
+    $_SESSION['user'] = [
+      'id' => $userData->user_id,
+      'username' => $userData->username,
+      'name' => $userData->name,
+      'role' => $userData->role
+    ];
     header("Location: dashboard.php");
     die;
 }
