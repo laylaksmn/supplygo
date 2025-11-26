@@ -8,10 +8,11 @@ if (isset($_SESSION['user'])) {
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     include_once 'conn.php';
-    $username = addslashes(trim($_POST['username']));
-    $email = addslashes(trim($_POST['email']));
-    $password  = addslashes(trim($_POST['password']));
-    $confirmPassword = addslashes(trim($_POST['confirmPassword']));
+    // Menggunakan Prepared Statement (lebih aman)
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password_raw  = $_POST['password']; // Password mentah
+    $confirmPassword = $_POST['confirmPassword'];
 
     $uploadDir = './uploadsPP/';
     if (!is_dir($uploadDir)) {
@@ -20,22 +21,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $name = $username;
     $profilepicture = $uploadDir . 'defaultprofile.jpg';
 
-   if ($password !== $confirmPassword) {
+   if ($password_raw !== $confirmPassword) {
     header('Location: signup.php?password=1');
     die;
   }
+  
+  // 1. Password Hashing (Wajib untuk keamanan!)
+  $password_hashed = password_hash($password_raw, PASSWORD_DEFAULT);
+  
   try {
+    // Memasukkan password yang sudah di-hash
     $stmt = $mysqli->prepare("INSERT INTO user (username, email, password, name, imagepath) VALUES (?, ?, ?, ?, ?)");
-    $stmt->bind_param("sssss", $username, $email, $password, $name, $profilepicture);
+    // 's' untuk string, ssssb berarti username, email, password_hashed, name, profilepicture adalah string
+    $stmt->bind_param("sssss", $username, $email, $password_hashed, $name, $profilepicture);
     $stmt->execute();
     $stmt->close();
   }catch(mysqli_sql_exception $exc){
     if ($mysqli->errno === 1062){
-      header('Location: signup.php?username=1');
+      // 2. Ganti pesan error 'taken'
+      header('Location: signup.php?username=1'); 
       die;
     }
   }
-  $_SESSION['user'] = $email;
+  
+  // Menggunakan username untuk sesi
+  $_SESSION['user'] = $username; 
   header("Location: dashboard.php");
   die;
 }
@@ -72,10 +82,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
       <button type="submit" class="btn-signup">SIGN UP</button>
       <?php if (isset($_GET['username'])): ?>
-      <p class="error">Username taken</p>
+      <p class="error">Username sudah terdaftar</p>
       <?php endif; ?>
       <?php if (isset($_GET['password'])): ?>
-      <p class="error">Password didn't match</p>
+      <p class="error">Password tidak cocok</p>
       <?php endif; ?>
 
       <p class="login-text"> 
