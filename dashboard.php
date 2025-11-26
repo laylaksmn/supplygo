@@ -25,9 +25,13 @@ $name = $userData['name'];
   <link rel="stylesheet" href="dashboard.css">
 </head>
 <body>
-  <div class="sidebar">
-    <img src="logo web.png" alt="Logo" class="logo">
+<div class="logo">
+    <img src="logo web.png" alt="Logo" class="logo-img">
     <h2>SUPPLYGO</h2>
+<a href="dashboard.php" class="logo">
+    <img src="logo web.png" alt="Logo" class="logo-img">
+    <h2>SUPPLYGO</h2>
+</a>
     <div class="nav">
       <a href="dashboard.php" class="active">Dashboard</a>
       <a href="market.php">Market</a>
@@ -84,3 +88,4 @@ $name = $userData['name'];
   </div>
 </body>
 </html>
+
