@@ -1,7 +1,6 @@
 <?php
-include 'auth.php';
-
-include_once 'conn.php';
+require_once 'auth.php';
+require_once 'conn.php';
 $products = [];
 $user = $_SESSION['user'];
 $result = $mysqli->query("SELECT * FROM user WHERE email = '$user'");
@@ -35,14 +34,11 @@ while ($productData = $result->fetch_assoc()) {
 <body>
 
 <header>
-  <div class="logo">
-    <img src="logo web.png" alt="Logo" class="logo-img">
-    <h2>SUPPLYGO</h2>
-</div>
-<a href="dashboard.php" class="logo">
-    <img src="logo web.png" alt="Logo" class="logo-img">
-    <h2>SUPPLYGO</h2>
-</a>
+    <div class="header-container">
+       <div class="logo">
+        <img src="logo web.png" alt="Logo" class="logo-img">
+        <h2>SUPPLYGO</h2>
+      </div>
       <nav>
         <a href="dashboard.php">Home</a>
         <a href="market.php">Market</a>
@@ -54,29 +50,20 @@ while ($productData = $result->fetch_assoc()) {
     </div>
 </header>
 
-<h1 class="history-title">HISTORY</h1>
-
-<main>
-    <?php foreach ($products as $product): ?>
-    <div class="order-card">
-        <div class="order-header">Toko <?= $product['market'] ?></div>
-        <div class="order-body">
-            <div class="order-info">
-                <p><b>Product</b> : <?= $product['name'] ?></p>
-                <p><b>Price</b> : <?= $product['price'] ?></p>
-                <p><b>Weight</b> : <?= $product['weight'] ?> kg</p>
-                <p><b>Stock</b> : <?= $product['stock'] ?></p>
-            </div>
-            <img src="<?= $product['image'] ?>" alt="<?= $product['name'] ?>">
-        </div>
-        <div class="order-btns">
-            <button class="reorder" >REORDER</button>
-        </div>
+<main class="cards-container">
+  <?php foreach ($products as $product): ?>
+    <div class="card">
+      <img src="<?= $product['image'] ?>" alt="<?= $product['name'] ?>" class="card-img">
+      <div class="card-content">
+        <h3><?= $product['name'] ?></h3>
+        <p><b>Toko:</b> <?= $product['market'] ?></p>
+        <p><b>Harga:</b> Rp<?= number_format($product['price'], 0, ',', '.') ?></p>
+        <p><b>Berat:</b> <?= $product['weight'] ?> kg</p>
+        <p><b>Stok:</b> <?= $product['stock'] ?></p>
+      </div>
     </div>
-    <?php endforeach; ?>
+  <?php endforeach; ?>
 </main>
 
-<script src="script.js"></script>
 </body>
 </html>
-
