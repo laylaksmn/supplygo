@@ -65,11 +65,14 @@ if ($resultProducts && $resultProducts->num_rows > 0) {
 </head>
 <body>
   <header>
-    <div class="header-container">
-      <div class="logo">
-        <img src="logo web.png" alt="Logo" class="logo-img">
-        <h2>SUPPLYGO</h2>
-      </div>
+ <div class="logo">
+    <img src="logo web.png" alt="Logo" class="logo-img">
+    <h2>SUPPLYGO</h2>
+</div>
+<a href="dashboard.php" class="logo">
+    <img src="logo web.png" alt="Logo" class="logo-img">
+    <h2>SUPPLYGO</h2>
+</a>
       <nav>
         <a href="dashboard.php">Home</a>
         <a href="market.php">Market</a>
@@ -192,3 +195,4 @@ if ($resultProducts && $resultProducts->num_rows > 0) {
   </main>
 </body>
 </html>
+
