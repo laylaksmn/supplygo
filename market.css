@@ -1,19 +1,19 @@
 * {
   box-sizing: border-box;
+  font-family: "Poppins", sans-serif;
 }
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
   background: #f5f6fa;
   display: flex;
   flex-direction: column;
   min-height: 100vh;
 }
 header {
-  background: #fff;
+  background: white;
   padding: 15px 0;
   border-radius: 0 0 10px 10px;
-  box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
 }
 .header-container {
   max-width: 1400px;
@@ -55,7 +55,7 @@ nav a.active {
 }
 button {
   background-color: #ff6600;
-  color: #fff;
+  color: white;
   border: none;
   border-radius: 20px;
   padding: 10px 30px;
@@ -68,11 +68,21 @@ button:hover {
   background-color: #e65c00;
 }
 main {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   padding: 30px;
+  justify-content: center;
 }
-.markets h2 { 
-  margin-bottom: 20px; color: #111; 
+.market-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.market-header h1 {
+  margin-bottom: 20px;
+  color: #ff6600;
 }
 .market-grid {
   display: grid;
@@ -80,16 +90,16 @@ main {
   gap: 20px;
 }
 .market-card {
-  background: #fff;
+  background: white;
   border-radius: 12px;
   overflow: hidden;
-  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
   transition: 0.3s;
   padding: 30px;
 }
 .market-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(255,102,0,0.3);
+  box-shadow: 0 10px 25px rgba(255, 102, 0, 0.3);
 }
 .market-card img {
   margin-top: 18px;
@@ -100,26 +110,47 @@ main {
 }
 .market-card .info {
   padding: 18px 0px;
-  font-weight: bold;
 }
 .market-card h3 {
   margin: 0;
   font-size: 20px;
-  color: #ff6600;
+  color: #333;
 }
-.market-card p {
-  margin: 8px 0 15px;
-  color: #ccc;
+label {
+  display: inline-block;
+  margin-top: 10px;
   font-size: 14px;
-  line-height: 1.5;
+  font-weight: bold;
+}
+.market-card form input {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+input[type="text"] {
+  padding: 10px;
+  margin-top: 5px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+input[type="file"] {
+  margin-top: 16px;
+  font-family: "Poppins", sans-serif;
+}
+.category {
+  margin: 8px 0 15px;
+  color: #aaa;
+  font-size: 14px;
 }
 .btn-market {
-  float:right;
+  float: right;
   margin-bottom: 18px;
   display: inline-block;
   background-color: #ff6600;
   border: none;
-  border-radius: 20px;
+  border-radius: 9999px;
   padding: 10px 30px;
   color: white;
   text-decoration: none;
